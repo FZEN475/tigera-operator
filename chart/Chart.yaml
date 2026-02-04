@@ -1,0 +1,14 @@
+apiVersion: v2
+name: tigera-operator
+version: 1.0.0
+description: "tigera-operator"
+type: application
+maintainers:
+  - name: FZEN
+    email: admin@fzen.pro
+    url: https://fzen.pro
+appVersion: 1.0.0
+dependencies:
+  - name: tigera-operator
+    version: "=3.28" 
+    repository: 'https://docs.tigera.io/calico/charts' 

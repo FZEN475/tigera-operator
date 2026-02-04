@@ -1,0 +1,39 @@
+services:
+  tigera-operator:
+    image: ghcr.io/fzen475/helm-install:latest
+    container_name: helm-tigera-operator
+    env_file: ./.env
+    environment:
+      TRACE: false
+      CUSTOM_CA_CERTS: "/tmp/ca.crt"
+      KUBECONFIG: "/root/.kube/config"
+      
+      HELM_REPOS: "tigera-operator@https://docs.tigera.io/calico/charts" # "extra_chart_1@oci:// extra_chart_2@oci://"
+      # helm $ENV_VALUES $HELM_COMMON_VALUES $ENV_NAMESPACE $HELM_DEPLOY_ARGS $ENV_APP_NAME $HELM_DEPLOY_CHART
+      ENV_VALUES: ""
+      ENV_NAMESPACE: "kube-system"
+      ENV_APP_NAME: "tigera-operator"
+      HELM_DEPLOY_CHART: "./chart/" # ./chart/ или gitlab/gitlab
+
+      DELETE_HELM: true
+      HELM_DELETE_ARGS: "uninstall"
+
+      INSTALL_HELM: true
+      HELM_DEPLOY_ARGS: 'upgrade --install --rollback-on-failure --wait=hookOnly --timeout 5m0s'
+
+      CRD_INSTALL: true
+    volumes:
+      - /tmp/tigera-operator:/source
+    secrets:
+      - source: kubeconfig
+        target: /root/.kube/config
+        mode: 0600
+      - source: ca.crt
+        target: /tmp/ca.crt
+        mode: 0600
+
+secrets:
+  kubeconfig:
+    file: /root/.kube/config
+  ca.crt:
+    file: /etc/ssl/certs/ca.crt
